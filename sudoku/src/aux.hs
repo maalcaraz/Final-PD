@@ -25,10 +25,16 @@ toFilas :: [Int] -> [[Int]]
 toFilas [] = []
 toFilas t = take 4 t : toFilas (drop 4 t) 
 
+-- Funcion que arma las columnas del tablero a partir de las filas
+toColumnas :: [[Int]] -> [[Int]]
+toColumnas [] = []
+toColumnas f = transpose f
+
 -- Funcion que separa el tablero en cuadros
 toCuadros :: [[Int]] -> [[Int]]
 toCuadros [] = []
 toCuadros (a:b:as) = toCuadros' a b ++ toCuadros as 
+
 -- Auxiliar de la funcion de arriba
 toCuadros' :: [Int] -> [Int] -> [[Int]]
 toCuadros' [] [] = []
