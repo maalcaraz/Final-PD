@@ -1,6 +1,8 @@
 module Main where
 
-import Lib
+import Sudoku
 
 main :: IO ()
-main = someFunc
+main = do
+    let solucion = resolverSudoku tableroSudoku
+    printTablero solucion
