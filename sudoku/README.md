@@ -1,4 +1,4 @@
-#sudoku
+# SUDOKU
 
 ### how to run with stack:
 1. Pararse en el path de ../Final-PD
