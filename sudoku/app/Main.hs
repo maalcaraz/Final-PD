@@ -4,5 +4,4 @@ import Sudoku
 
 main :: IO ()
 main = do
-    let solucion = resolverSudoku tableroSudoku
-    printTablero solucion
+    printSolucionTablero $ resolverSudoku tableroSudoku
