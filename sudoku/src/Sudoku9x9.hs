@@ -104,6 +104,6 @@ sudokuParser sud = concatMap rowParser $ zip [0..8] sud
     rowParser (row, vals) = colParser row $ zip [0..8] vals
 
     colParser :: Int -> [(Int, Valor)] -> [((Int, Int), Valor)]
-    colParser row cols = map (\(col, v) -> ((row, col), v)) cols
+    colParser row colsAndVals = map (\(col, v) -> ((row, col), v)) colsAndVals
     -- por cada una de los cols defino (col,v) donde (row,col) representa el
     -- indice y v representa es el valor
