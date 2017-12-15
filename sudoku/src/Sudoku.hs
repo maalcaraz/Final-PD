@@ -6,6 +6,7 @@ module Sudoku
     ) where
 
 import Data.Array
+import Tests
 
 -- Valor : representa un valor del 0 al 9. 0 significa vacio
 type Valor = Int
@@ -35,7 +36,7 @@ soluciones t = soluciones' (ubicacionesVacias t) t
     -- recursivamente busca todas las soluciones para ese conjunto de valores.
     soluciones' :: [Ubicacion] -> Tablero -> [Tablero]
     soluciones' []     t = [t]
-    soluciones' (ub:ubs) t = concatMap (soluciones' ubs t) tablerosPosibles ub
+    soluciones' (ub:ubs) t = concatMap (soluciones' ubs) tablerosPosibles
       where
         tablerosPosibles = map (\v -> copiarTableroConValorNuevo v ub t) valoresPosibles
         valoresPosibles = [v | v <- [1..9], isValidValor v ub t]
@@ -88,14 +89,17 @@ printSolucionTablero (Just t) = mapM_ putStrLn [show $ t `valsInRow` row | row <
         -- de la otra. Logramos mostrar todas las lineas gracias a mapM_
         -- mapM_ :: (Monad m, Foldable t) => (a -> m b) -> t a -> m ()
 
-
 -- Devuelve un tablero de sudoku listo para procesarse
-tableroSudoku :: Tablero
-tableroSudoku = array ((0, 0), (8, 8)) $ sudokuParser sudokuEjemplo
+tableroSudoku :: Int -> Tablero
+tableroSudoku 1 = array ((0, 0), (8, 8)) $ sudokuParser sudokuEjemplo1
+tableroSudoku 2 = array ((0, 0), (8, 8)) $ sudokuParser sudokuEjemplo2
+tableroSudoku 3 = array ((0, 0), (8, 8)) $ sudokuParser sudokuEjemplo3
+tableroSudoku x = array ((0, 0), (8, 8)) $ sudokuParser emptySudoku
                 -- se reserva un espacio en memoria con toda la combinacion de
                 -- de indices desde 0,0 hasta el 8,8 y luego se rellena con
                 -- lo que devuelve el metodo sudokuParser el cual pasa un 
                 -- array de array de Int a un formato de Tablero definido mas arriba
+
 
 -- Convierte un array de filas de valores en un array de tuplas compuestas 
 -- por ubicacion y valor (Es del tipo Tablero)
@@ -113,18 +117,3 @@ sudokuParser sud = concatMap rowParser $ zip [0..8] sud
     colParser row cols = map (\(col, v) -> ((row, col), v)) cols
     -- por cada una de los cols defino (col,v) donde (row,col) representa el
     -- indice y v representa es el valor
-
-
--- Ejemplo sacado de: http://en.wikipedia.org/wiki/Sudoku
-sudokuEjemplo :: [[Valor]]
-sudokuEjemplo = [[5, 3, 0,  0, 7, 0,  0, 0, 0],
-                 [6, 0, 0,  1, 9, 5,  0, 0, 0],
-                 [0, 9, 8,  0, 0, 0,  0, 6, 0],
-
-                 [8, 0, 0,  0, 6, 0,  0, 0, 3],
-                 [4, 0, 0,  8, 0, 3,  0, 0, 1],
-                 [7, 0, 0,  0, 2, 0,  0, 0, 6],
-
-                 [0, 6, 0,  0, 0, 0,  2, 8, 0],
-                 [0, 0, 0,  4, 1, 9,  0, 0, 5],
-                 [0, 0, 0,  0, 8, 0,  0, 7, 0]]
