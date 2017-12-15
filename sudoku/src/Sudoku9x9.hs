@@ -1,4 +1,4 @@
-module Sudoku
+module Sudoku9x9
     ( 
         tableroSudoku,
         resolverSudoku,
@@ -6,7 +6,7 @@ module Sudoku
     ) where
 
 import Data.Array
-import Tests
+import Tests9x9
 import SudokuTypes
 
 -- Retorna un tablero resuelto o 'Nothing' si no encuentra ninguna
@@ -28,10 +28,9 @@ soluciones t = soluciones' (ubicacionesVacias t) t
     soluciones' []     t = [t]
     soluciones' (ub:ubs) t = concatMap (soluciones' ubs) tablerosPosibles
       where
-        tablerosPosibles = map (\v -> copiarTableroConValorNuevo v ub t) valoresPosibles
+        tablerosPosibles = map (\vp -> copiarTableroConValorNuevo vp ub t) valoresPosibles
         valoresPosibles = [v | v <- [1..9], isValidValor v ub t]
         
-
 
 -- Retorna un array con todas las ubicaciones vacias
 ubicacionesVacias :: Tablero -> [Ubicacion]
@@ -84,6 +83,7 @@ tableroSudoku :: Int -> Tablero
 tableroSudoku 1 = array ((0, 0), (8, 8)) $ sudokuParser sudokuEjemplo1
 tableroSudoku 2 = array ((0, 0), (8, 8)) $ sudokuParser sudokuEjemplo2
 tableroSudoku 3 = array ((0, 0), (8, 8)) $ sudokuParser sudokuEjemplo3
+tableroSudoku 4 = array ((0, 0), (8, 8)) $ sudokuParser sudokuEjemplo4
 tableroSudoku x = array ((0, 0), (8, 8)) $ sudokuParser emptySudoku
                 -- se reserva un espacio en memoria con toda la combinacion de
                 -- de indices desde 0,0 hasta el 8,8 y luego se rellena con
