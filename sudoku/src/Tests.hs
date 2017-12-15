@@ -6,8 +6,7 @@ module Tests
         emptySudoku
     ) where
 
--- Valor : representa un valor del 0 al 9. 0 significa vacio
-type Valor = Int
+import SudokuTypes
 
 -- Ejemplo sacado de: http://en.wikipedia.org/wiki/Sudoku
 sudokuEjemplo1 :: [[Valor]]
