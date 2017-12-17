@@ -2,24 +2,29 @@ module Sudoku16x16
     ( 
         tableroSudoku16x16,
         resolverSudoku16x16,
-        printSolucionTablero16x16
+        printSolucionTablero16x16,
+        printSolucionTableros16x16,
+        sudokuParser
     ) where
 
 import Data.Array
 import Tests16x16
 import SudokuTypes
 
--- Retorna un tablero resuelto o 'Nothing' si no encuentra ninguna
-resolverSudoku16x16 :: Tablero -> Maybe Tablero
-resolverSudoku16x16 = primerSolucionONada . soluciones
+-- Retorna x cant de tableros resueltos o 'Nothing' si no encuentra ninguno
+resolverSudoku16x16 :: Tablero -> [Maybe Tablero]
+resolverSudoku16x16 = tablerosToMaybe . soluciones
 
-primerSolucionONada :: [a] -> Maybe a
-primerSolucionONada []     = Nothing
-primerSolucionONada (x:xs) = Just x
+tablerosToMaybe :: [Tablero] -> [Maybe Tablero]
+tablerosToMaybe [] = [Nothing]
+tablerosToMaybe ts = map tableroToMaybe ts
+
+tableroToMaybe :: Tablero -> Maybe Tablero
+tableroToMaybe t = Just t
 
 -- Devuelve un array de Tableros donde cada uno es una solucion
 soluciones :: Tablero -> [Tablero]
-soluciones t = soluciones' (ubicacionesVacias t) t
+soluciones t = take 10 ( soluciones' (ubicacionesVacias t) t )
   where
     -- Dada una lista de ubicaciones vacias en un tablero, toma una ubicacion vacia,
     -- determina que ubicaciones pueden ser puestas en esa solucion, y luego
@@ -73,11 +78,14 @@ t `valsInCuadrado` (row, col) = [t ! v | v <- ubicaciones]
 -- resolverlo o un Just en caso de que si
 printSolucionTablero16x16 :: Maybe Tablero -> IO ()
 printSolucionTablero16x16 Nothing  = putStrLn "No tiene solucion"
-printSolucionTablero16x16 (Just t) = mapM_ putStrLn [show $ t `valsInRow` row | row <- [0..15]]
+printSolucionTablero16x16 (Just t) = mapM_ putStrLn ([show $ t `valsInRow` row | row <- [0..15]] ++ ["\n"])
         -- por cada una de las rows se devuelve un string gracias al uso de la
         -- funcion show y ejecutamos el putStrLn para que se muestre una debajo
         -- de la otra. Logramos mostrar todas las lineas gracias a mapM_
         -- mapM_ :: (Monad m, Foldable t) => (a -> m b) -> t a -> m ()
+
+printSolucionTableros16x16 :: [Maybe Tablero] -> IO ()
+printSolucionTableros16x16 ts = mapM_ printSolucionTablero16x16 ts 
 
 -- Devuelve un tablero de sudoku listo para procesarse
 tableroSudoku16x16 :: Int -> Tablero
