@@ -4,7 +4,7 @@ module Sudoku16x16
         resolverSudoku16x16,
         printSolucionTablero16x16,
         printSolucionTableros16x16,
-        sudokuParser
+        sudokuParser16x16
     ) where
 
 import Data.Array
@@ -89,8 +89,8 @@ printSolucionTableros16x16 ts = mapM_ printSolucionTablero16x16 ts
 
 -- Devuelve un tablero de sudoku listo para procesarse
 tableroSudoku16x16 :: Int -> Tablero
-tableroSudoku16x16 1 = array ((0, 0), (15, 15)) $ sudokuParser sudokuEjemplo1
-tableroSudoku16x16 x = array ((0, 0), (15, 15)) $ sudokuParser emptySudoku
+tableroSudoku16x16 1 = array ((0, 0), (15, 15)) $ sudokuParser16x16 sudokuEjemplo1
+tableroSudoku16x16 x = array ((0, 0), (15, 15)) $ sudokuParser16x16 emptySudoku
                 -- se reserva un espacio en memoria con toda la combinacion de
                 -- de indices desde 0,0 hasta el 8,8 y luego se rellena con
                 -- lo que devuelve el metodo sudokuParser el cual pasa un 
@@ -99,8 +99,8 @@ tableroSudoku16x16 x = array ((0, 0), (15, 15)) $ sudokuParser emptySudoku
 
 -- Convierte un array de filas de valores en un array de tuplas compuestas 
 -- por ubicacion y valor (Es del tipo Tablero)
-sudokuParser :: [[Valor]] -> [(Ubicacion, Valor)]
-sudokuParser sud = concatMap rowParser $ zip [0..15] sud
+sudokuParser16x16 :: [[Valor]] -> [(Ubicacion, Valor)]
+sudokuParser16x16 sud = concatMap rowParser $ zip [0..15] sud
         -- zip devuelve [(0,[1,2,15,4,5,6,7,8,9]), .. ] donde cada valor
         -- es (Int,[Valor]) parametro que recibe rowParser que con concatMap
         -- lo que hacemos es mandarle cada uno de los elementos del array

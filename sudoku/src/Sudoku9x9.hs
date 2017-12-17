@@ -4,7 +4,7 @@ module Sudoku9x9
         resolverSudoku9x9,
         printSolucionTablero9x9,
         printSolucionTableros9x9,
-        sudokuParser
+        sudokuParser9x9
     ) where
 
 import Data.Array
@@ -88,11 +88,11 @@ printSolucionTableros9x9 ts = mapM_ printSolucionTablero9x9 ts
 
 -- Devuelve un tablero de sudoku listo para procesarse
 tableroSudoku9x9 :: Int -> Tablero
-tableroSudoku9x9 1 = array ((0, 0), (8, 8)) $ sudokuParser sudokuEjemplo1
-tableroSudoku9x9 2 = array ((0, 0), (8, 8)) $ sudokuParser sudokuEjemplo2
-tableroSudoku9x9 3 = array ((0, 0), (8, 8)) $ sudokuParser sudokuEjemplo3
-tableroSudoku9x9 4 = array ((0, 0), (8, 8)) $ sudokuParser sudokuEjemplo4
-tableroSudoku9x9 x = array ((0, 0), (8, 8)) $ sudokuParser emptySudoku
+tableroSudoku9x9 1 = array ((0, 0), (8, 8)) $ sudokuParser9x9 sudokuEjemplo1
+tableroSudoku9x9 2 = array ((0, 0), (8, 8)) $ sudokuParser9x9 sudokuEjemplo2
+tableroSudoku9x9 3 = array ((0, 0), (8, 8)) $ sudokuParser9x9 sudokuEjemplo3
+tableroSudoku9x9 4 = array ((0, 0), (8, 8)) $ sudokuParser9x9 sudokuEjemplo4
+tableroSudoku9x9 x = array ((0, 0), (8, 8)) $ sudokuParser9x9 emptySudoku
                 -- se reserva un espacio en memoria con toda la combinacion de
                 -- de indices desde 0,0 hasta el 8,8 y luego se rellena con
                 -- lo que devuelve el metodo sudokuParser el cual pasa un 
@@ -101,8 +101,8 @@ tableroSudoku9x9 x = array ((0, 0), (8, 8)) $ sudokuParser emptySudoku
 
 -- Convierte un array de filas de valores en un array de tuplas compuestas 
 -- por ubicacion y valor (Es del tipo Tablero)
-sudokuParser :: [[Valor]] -> [(Ubicacion, Valor)]
-sudokuParser sud = concatMap rowParser $ zip [0..8] sud
+sudokuParser9x9 :: [[Valor]] -> [(Ubicacion, Valor)]
+sudokuParser9x9 sud = concatMap rowParser $ zip [0..8] sud
         -- zip devuelve [(0,[1,2,3,4,5,6,7,8,9]), .. ] donde cada valor
         -- es (Int,[Valor]) parametro que recibe rowParser que con concatMap
         -- lo que hacemos es mandarle cada uno de los elementos del array

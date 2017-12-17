@@ -22,6 +22,9 @@ leerArchivo nombre size = do
                      putStrLn "\t\t\t\tSudoku parsed \n"
                      putStrLn (printAsMatriz size arrVals)
                      putStrLn "\n============================================================================================================================================================== \n"
+                     putStrLn "\t\t\t\tSudoku parsed \n"
+                     putStrLn (printAsMatriz size arrVals)
+                     putStrLn "\n============================================================================================================================================================== \n"
 
 
 
@@ -31,20 +34,22 @@ printAsMatriz n (lista) = " __________________" ++ '\n' : ' ': (intersperse '|' 
 
 parsearEntrada :: String-> [Int]
 parsearEntrada [] = []
-parsearEntrada cadena
-                    | (head cadena) == '-' = 0 : (parsearEntrada (tail cadena)) 
-                    | ((head cadena)=='[')||((head cadena)==']') || ((head cadena)==',') = parsearEntrada (tail cadena)
-                    |otherwise = digitToInt((head cadena)) : (parsearEntrada (tail cadena))
+parsearEntrada c:tailCadena 
+                    | c == '[' || c == ']' || c == ',' = parsearEntrada tailCadena
+                    | otherwise = digitToInt c : parsearEntrada tailCadena
 
 
 
---fromArrIntToTablero :: Int -> [Int] -> Tablero
---fromArrIntToTablero size [] = array ((0, 0), (8, 8)) $ sudokuParser [[0]] 
---fromArrIntToTablero size ls | (length ls) == (size * size) && size == 9 = array ((0, 0), (8, 8)) $ sudokuParser ( formatForParser size ls )
---                            | (length ls) == (size * size) && size == 4 = array ((0, 0), (3, 3)) $ sudokuParser ( formatForParser size ls )
---                            | otherwise = array ((0, 0), (8, 8)) $ sudokuParser [[0]] 
+fromArrIntToTablero :: Int -> [Int] -> Tablero
+fromArrIntToTablero size [] = array ((0, 0), (8, 8)) $ sudokuParser [[0]] 
+fromArrIntToTablero size ls | (length ls) == (size * size) && size == 9 = array ((0, 0), (8, 8)) $ sudokuParser ( formatForParser size ls )
+                            | (length ls) == (size * size) && size == 4 = array ((0, 0), (3, 3)) $ sudokuParser ( formatForParser size ls )
+                            | otherwise = array ((0, 0), (8, 8)) $ sudokuParser [[0]] 
 
 
---formatForParser :: Int -> [Int] -> [[Int]]
---formatForParser size [] = []
---formatForParser = (take size ls) :  (formatForParser size ( ls)
+formatForParser :: Int -> [Int] -> [[Int]]
+formatForParser size [] = []
+formatForParser size ls = (take size ls) :  (formatForParser size (drop size ls))
+
+
+
