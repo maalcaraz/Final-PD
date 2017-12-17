@@ -29,8 +29,17 @@ main = do
     putStrLn "\n====================================================== \n"
     putStrLn "Resolucion tablero 4x4 (Ejemplo 4): \n"
     let sudokuResolution4x4ej4 = resolverSudoku4x4 $ tableroSudoku4x4 4
-    printSolucionTableros4x4 sudokuResolution4x4ej4
-    
+    let cadenaSudoku = printSolucionTableros4x4 sudokuResolution4x4ej4
+
+
+    putStrLn "\n====================================================== \n"
+    putStrLn "Resolucion tablero 4x4 (Ejemplo 4): \n"
+    let sudokuResolution4x4ej4 = soluciones $ tableroSudoku4x4 4
+    let tablerosPrinteables = map toPrinteable sudokuResolution4x4ej4
+    let stringsTableros = map (printAsMatriz 4) tablerosPrinteables
+    let solucionesString = toFormatForSave stringsTableros 
+    writeFile "./src/out_files/asdasd.txt" stringGuardado
+
     --putStrLn "\n======================================================"
     --let sudokuResolution16x16 = resolverSudoku16x16 $ tableroSudoku16x16 1
     --printSolucionTablero16x16 sudokuResolution16x16
