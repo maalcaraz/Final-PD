@@ -8,24 +8,29 @@ main :: IO ()
 main = do
     putStrLn "\n====================================================== \n"
     putStrLn "Resolucion tablero 9x9: \n"
-    let sudokuResolution9x9Ok = resolverSudoku $ tableroSudoku 1
-    printSolucionTablero sudokuResolution9x9Ok
+    let sudokuResolution9x9ej1 = resolverSudoku9x9 $ tableroSudoku9x9 1
+    printSolucionTableros9x9 sudokuResolution9x9ej1
 
     putStrLn "\n====================================================== \n"
     putStrLn "Resolucion tablero 9x9 vacio: \n"
-    let sudokuResolution9x9Vacio = resolverSudoku $ tableroSudoku 5
-    printSolucionTablero sudokuResolution9x9Vacio
+    let sudokuResolution9x9ej5 = resolverSudoku9x9 $ tableroSudoku9x9 5
+    printSolucionTableros9x9 sudokuResolution9x9ej5
 
     putStrLn "\n====================================================== \n"
     putStrLn "Resolucion tablero 9x9 con error: \n"
-    let sudokuResolution9x9Fail = resolverSudoku $ tableroSudoku 4
-    printSolucionTablero sudokuResolution9x9Fail
+    let sudokuResolution9x9ej4 = resolverSudoku9x9 $ tableroSudoku9x9 4
+    printSolucionTableros9x9 sudokuResolution9x9ej4
     
     putStrLn "\n====================================================== \n"
-    putStrLn "Resolucion tablero 4x4: \n"
-    let sudokuResolution4x4 = resolverSudoku4x4 $ tableroSudoku4x4 1
-    printSolucionTablero4x4 sudokuResolution4x4
+    putStrLn "Resolucion tablero 4x4 (Ejemplo 1): \n"
+    let sudokuResolution4x4ej1 = resolverSudoku4x4 $ tableroSudoku4x4 1
+    printSolucionTableros4x4 sudokuResolution4x4ej1
+
+    putStrLn "\n====================================================== \n"
+    putStrLn "Resolucion tablero 4x4 (Ejemplo 4): \n"
+    let sudokuResolution4x4ej4 = resolverSudoku4x4 $ tableroSudoku4x4 4
+    printSolucionTableros4x4 sudokuResolution4x4ej4
     
-    putStrLn "\n======================================================"
+    --putStrLn "\n======================================================"
     --let sudokuResolution16x16 = resolverSudoku16x16 $ tableroSudoku16x16 1
     --printSolucionTablero16x16 sudokuResolution16x16
