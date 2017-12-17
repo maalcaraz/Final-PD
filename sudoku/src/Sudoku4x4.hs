@@ -4,10 +4,17 @@ module Sudoku4x4
         resolverSudoku4x4,
         printSolucionTablero4x4,
         printSolucionTableros4x4,
-        sudokuParser4x4
+        sudokuParser4x4,
+        soluciones,
+        toFilas,
+        toPrinteable,
+        printAsMatriz,
+        toFormatForSave
     ) where
 
 import Data.Array
+import Data.Char
+import Data.List
 import Tests4x4
 
 import SudokuTypes
@@ -117,3 +124,19 @@ sudokuParser4x4 sud = concatMap rowParser $ zip [0..3] sud
     colParser row cols = map (\(col, v) -> ((row, col), v)) cols
     -- por cada una de los cols defino (col,v) donde (row,col) representa el
     -- indice y v representa el valor
+
+toFilas :: [Valor] -> [[Valor]]
+toFilas [] = []
+toFilas t = take 4 t : toFilas (drop 4 t)
+
+toPrinteable :: Tablero -> [Valor]
+toPrinteable t =  [t ! (row, col) | row <- [0..3], col <- [0..3]] 
+
+printAsMatriz :: Int -> [Valor] -> String
+printAsMatriz _ [] = " ________"
+printAsMatriz n (lista) = " ________" ++ '\n' : ' ' : (intersperse '|' (map (intToDigit) (take n lista))) ++ '\n' : (printAsMatriz n(drop n lista))
+
+toFormatForSave :: [String] -> String
+toFormatForSave [] = []
+toFormatForSave t =  unlines t
+
