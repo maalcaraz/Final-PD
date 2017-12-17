@@ -7,29 +7,32 @@ import Data.Maybe
 leer :: String -> IO ()
 leer nombre = do 
 				s <- readFile nombre;
-				let i = parsearEntrada s
-				let f = toFilas i
-				start i
-
-				print (printAsMatriz 4 i)
-				putStrLn (printAsMatriz 4 i)
-
+				let entrada = parsearEntrada s
+				--if not (tableroValido entrada) 
+				--	then putStrLn "Tablero invalido" 
+				--	else   
+						--let res = start f
+				--let a = toTablero res
+			--	print (printAsMatriz 4 i)
+			--	putStrLn (printAsMatriz 4 i)
+				writeFile "rs1.txt" ("Sudoku de entrada"++ '\n' : (printAsMatriz 4 (toFilas entrada)) ++ '\n':'\n':[])
+				appendFile "rs1.txt"("Sudoku resuelto"++ '\n' :  (printAsMatriz 4 (start (toFilas entrada)))) 
 
 -- Toma un tablero que viene desde un archivo y lo convierte en una lista de enteros, suprimiento caracteres como '[', ']', ','
 -- Esta funcion puede ser modificada para que directamente reconozca los numeros.
 -- O mejor, para que elimine solamente los caracteres especiales.
 parsearEntrada :: String-> [Int]
 parsearEntrada [] = []
-parsearEntrada cadena
-					| (head cadena) == '-' = 0 : (parsearEntrada (tail cadena)) 
-					| ((head cadena)=='[')||((head cadena)==']') || ((head cadena)==',') = parsearEntrada (tail cadena)
-					|otherwise = digitToInt((head cadena)) : (parsearEntrada (tail cadena))
+parsearEntrada (c:cs)
+					| c == '-' = 0 : (parsearEntrada cs) 
+					| isDigit c && (digitToInt(c) `elem` [1..4]) = digitToInt(c) : (parsearEntrada cs)
+					|otherwise = parsearEntrada cs
 
 
 -- Funcion que imprime el tablero en pantalla. Sus parámetros de entrada son: el tamaño del tablero y el tablero en forma de lista.
-printAsMatriz :: Int -> [Int] -> String
+printAsMatriz :: Int -> [[Int]] -> String
 printAsMatriz _ [] = " ________"
-printAsMatriz n (lista) = " ________" ++ '\n' : ' ': (intersperse '|' (map (intToDigit) (take n lista))) ++ '\n' : (printAsMatriz n(drop n lista))
+printAsMatriz n (l:ls) = " ________" ++ '\n' : ' ': (intersperse '|' (map (intToDigit) l)) ++ '\n' : (printAsMatriz n ls)
 
 
 -- Funcion que enlista las filas del tablero
@@ -62,7 +65,7 @@ fromTuplas :: [(Int , [Int])] -> [[Int]]
 fromTuplas [] = [] 
 fromTuplas (t:ts) = (snd t) : fromTuplas ts
 
--- Tiene que tomar como parametros las filas
+-- Toma como parametros las filas
 toTablero :: [(Int, [Int])] -> [Int]
 toTablero [] = []
 toTablero ((_, l):as) = l ++ toTablero as
@@ -90,14 +93,21 @@ isFull l
 		| 0 `elem` l = False
 		| otherwise = True
 
+tableroValido :: [Int] -> Bool
+tableroValido [] = False
+tableroValido t 
+				| length t == 16 = True
+				| otherwise = False 
+
+
 -- Falta una funcion que verifique si un tablero armado es válido o no.
-isValid :: [(Int, [Int])] -> [(Int, [Int])] -> [(Int, [Int])] -> Bool 
-isValid cuadrantes filas columnas = (isValid' cuadrantes) && (isValid' filas) && (isValid' columnas)
+--isValid :: [(Int, [Int])] -> [(Int, [Int])] -> [(Int, [Int])] -> Bool 
+--isValid cuadrantes filas columnas = (isValid' cuadrantes) && (isValid' filas) && (isValid' columnas)
 
 -- Funcion auxiliar a la de arriba.
-isValid' :: [(Int, [Int])] -> Bool 
-isValid' [] = True
-isValid' ((_, l):as) = null (valorFaltante l) && (isValid' as) 
+--isValid' :: [(Int, [Int])] -> Bool 
+--isValid' [] = True
+--isValid' ((_, l):as) = null (valorFaltante l) && (isValid' as) 
 
 
 -- Devuelve el valor que todavia no está en la lista. Sirve tambien para los indices de donde no esta un valor.
