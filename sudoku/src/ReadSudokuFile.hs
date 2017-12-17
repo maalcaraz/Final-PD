@@ -48,8 +48,3 @@ parsearEntrada cadena
 --formatForParser :: Int -> [Int] -> [[Int]]
 --formatForParser size [] = []
 --formatForParser = (take size ls) :  (formatForParser size ( ls)
-
-
-
-
-
