@@ -19,12 +19,10 @@ printAsMatriz n lista
         | n == 4 = " _______" ++ '\n' : ' ' : auxPrint n lista
         | n == 9 = " _________________" ++ '\n' : ' ' : auxPrint n lista
         | n == 16 = " ________________________________" ++ '\n' : ' ' : auxPrint n lista
-
-
-auxPrint :: Int -> [[Int]] -> String
-auxPrint n (l:ls) = (intersperse '|' (map intToDigit l)) ++ '\n' : (printAsMatriz n ls)
+        where
+            auxPrint n (l:ls) = (intersperse '|' (map intToDigit l)) ++ '\n' : (printAsMatriz n ls)
                     
-
+-- Lleva un tablero a un formato que pueda ser tomado por el metodo prinAsMatriz
 toPrinteable :: Int -> Tablero -> [[Valor]]
 toPrinteable tam t =  toFilas tam [t ! (row, col) | row <- [0..tam-1], col <- [0..tam-1]] 
 

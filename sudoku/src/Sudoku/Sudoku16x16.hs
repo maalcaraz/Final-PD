@@ -1,10 +1,11 @@
 module Sudoku.Sudoku16x16
     ( 
-        tableroSudoku16x16,
-        resolverSudoku16x16,
-        printSolucionTablero16x16,
-        printSolucionTableros16x16,
-        sudokuParser16x16
+        resolverSudoku,
+        tableroSudoku,
+        printSolucionTableros,
+        sudokuParser,
+        sudokuParser',
+        soluciones
     ) where
 
 import Data.Array
@@ -12,8 +13,8 @@ import Tests16x16
 import SudokuTypes
 
 -- Retorna x cant de tableros resueltos o 'Nothing' si no encuentra ninguno
-resolverSudoku16x16 :: Tablero -> [Maybe Tablero]
-resolverSudoku16x16 = tablerosToMaybe . soluciones
+resolverSudoku :: Tablero -> [Maybe Tablero]
+resolverSudoku = tablerosToMaybe . soluciones
 
 tablerosToMaybe :: [Tablero] -> [Maybe Tablero]
 tablerosToMaybe [] = [Nothing]
@@ -33,10 +34,9 @@ soluciones t = take 10 ( soluciones' (ubicacionesVacias t) t )
     soluciones' []     t = [t]
     soluciones' (ub:ubs) t = concatMap (soluciones' ubs) tablerosPosibles
       where
-        tablerosPosibles = map (\v -> copiarTableroConValorNuevo v ub t) valoresPosibles
+        tablerosPosibles = map (\vp -> copiarTableroConValorNuevo vp ub t) valoresPosibles
         valoresPosibles = [v | v <- [1..16], isValidValor v ub t]
         
-
 
 -- Retorna un array con todas las ubicaciones vacias
 ubicacionesVacias :: Tablero -> [Ubicacion]
@@ -68,40 +68,50 @@ t `valsInColumn` col = [t ! v | v <- range((0, col), (15, col))]
 valsInCuadrado :: Tablero -> Ubicacion -> [Valor]
 t `valsInCuadrado` (row, col) = [t ! v | v <- ubicaciones]
   where
-    row' = (row `div` 2) * 2
-    col' = (col `div` 2) * 2
-    ubicaciones = range((row', col'), (row' + 1, col' + 1))
+    row' = (row `div` 4) * 4
+    col' = (col `div` 4) * 4
+    ubicaciones = range((row', col'), (row' + 3, col' + 3))
 
 
 -- recibe un Maybe Tablero porque la idea es que sea llamado desde 
 -- la funcion resolverSudoku la cual devuelve Nothing si no puede
 -- resolverlo o un Just en caso de que si
-printSolucionTablero16x16 :: Maybe Tablero -> IO ()
-printSolucionTablero16x16 Nothing  = putStrLn "No tiene solucion"
-printSolucionTablero16x16 (Just t) = mapM_ putStrLn ([show $ t `valsInRow` row | row <- [0..15]] ++ ["\n"])
+printSolucionTablero :: Maybe Tablero -> IO ()
+printSolucionTablero Nothing  = putStrLn "No tiene solucion"
+printSolucionTablero (Just t) = mapM_ putStrLn ([show $ t `valsInRow` row | row <- [0..15]] ++ ["\n"])
         -- por cada una de las rows se devuelve un string gracias al uso de la
         -- funcion show y ejecutamos el putStrLn para que se muestre una debajo
         -- de la otra. Logramos mostrar todas las lineas gracias a mapM_
         -- mapM_ :: (Monad m, Foldable t) => (a -> m b) -> t a -> m ()
 
-printSolucionTableros16x16 :: [Maybe Tablero] -> IO ()
-printSolucionTableros16x16 ts = mapM_ printSolucionTablero16x16 ts 
+printSolucionTableros :: [Maybe Tablero] -> IO ()
+printSolucionTableros ts = mapM_ printSolucionTablero ts 
 
 -- Devuelve un tablero de sudoku listo para procesarse
-tableroSudoku16x16 :: Int -> Tablero
-tableroSudoku16x16 1 = array ((0, 0), (15, 15)) $ sudokuParser16x16 sudokuEjemplo1
-tableroSudoku16x16 x = array ((0, 0), (15, 15)) $ sudokuParser16x16 emptySudoku
+tableroSudoku :: Int -> Tablero
+tableroSudoku 1 = array ((0, 0), (15, 15)) $ sudokuParser sudokuEjemplo1
+tableroSudoku 2 = array ((0, 0), (15, 15)) $ sudokuParser sudokuEjemplo2
+tableroSudoku x = array ((0, 0), (15, 15)) $ sudokuParser emptySudoku
                 -- se reserva un espacio en memoria con toda la combinacion de
-                -- de indices desde 0,0 hasta el 8,8 y luego se rellena con
+                -- de indices desde 0,0 hasta el 15,15 y luego se rellena con
                 -- lo que devuelve el metodo sudokuParser el cual pasa un 
                 -- array de array de Int a un formato de Tablero definido mas arriba
+
+sudokuParser' :: [[Valor]] -> Tablero
+sudokuParser' sud = array ((0, 0), (15, 15)) $ concatMap rowParser $ zip [0..15] sud
+    where
+    rowParser :: (Int, [Valor]) -> [((Int, Int), Valor)]
+    rowParser (row, vals) = colParser row $ zip [0..15] vals
+
+    colParser :: Int -> [(Int, Valor)] -> [((Int, Int), Valor)]
+    colParser row colsAndVals = map (\(col, v) -> ((row, col), v)) colsAndVals
 
 
 -- Convierte un array de filas de valores en un array de tuplas compuestas 
 -- por ubicacion y valor (Es del tipo Tablero)
-sudokuParser16x16 :: [[Valor]] -> [(Ubicacion, Valor)]
-sudokuParser16x16 sud = concatMap rowParser $ zip [0..15] sud
-        -- zip devuelve [(0,[1,2,15,4,5,6,7,8,9]), .. ] donde cada valor
+sudokuParser :: [[Valor]] -> [(Ubicacion, Valor)]
+sudokuParser sud = concatMap rowParser $ zip [0..15] sud
+        -- zip devuelve [(0,[1,2,3,4,5,6,7,15,16]), .. ] donde cada valor
         -- es (Int,[Valor]) parametro que recibe rowParser que con concatMap
         -- lo que hacemos es mandarle cada uno de los elementos del array
         -- y luego acumular el resultado en otro array
@@ -110,6 +120,6 @@ sudokuParser16x16 sud = concatMap rowParser $ zip [0..15] sud
     rowParser (row, vals) = colParser row $ zip [0..15] vals
 
     colParser :: Int -> [(Int, Valor)] -> [((Int, Int), Valor)]
-    colParser row cols = map (\(col, v) -> ((row, col), v)) cols
+    colParser row colsAndVals = map (\(col, v) -> ((row, col), v)) colsAndVals
     -- por cada una de los cols defino (col,v) donde (row,col) representa el
     -- indice y v representa es el valor

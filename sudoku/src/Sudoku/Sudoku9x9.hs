@@ -1,11 +1,11 @@
 module Sudoku.Sudoku9x9
     ( 
-        tableroSudoku9x9,
-        resolverSudoku9x9,
-        printSolucionTablero9x9,
-        printSolucionTableros9x9,
-        sudokuParser9x9,
-        sudokuParser9x9',
+        tableroSudoku,
+        resolverSudoku,
+        printSolucionTablero,
+        printSolucionTableros,
+        sudokuParser,
+        sudokuParser',
         soluciones
     ) where
 
@@ -14,8 +14,8 @@ import Tests9x9
 import SudokuTypes
 
 -- Retorna x cant de tableros resueltos o 'Nothing' si no encuentra ninguno
-resolverSudoku9x9 :: Tablero -> [Maybe Tablero]
-resolverSudoku9x9 = tablerosToMaybe . soluciones
+resolverSudoku :: Tablero -> [Maybe Tablero]
+resolverSudoku = tablerosToMaybe . soluciones
 
 tablerosToMaybe :: [Tablero] -> [Maybe Tablero]
 tablerosToMaybe [] = [Nothing]
@@ -77,31 +77,31 @@ t `valsInCuadrado` (row, col) = [t ! v | v <- ubicaciones]
 -- recibe un Maybe Tablero porque la idea es que sea llamado desde 
 -- la funcion resolverSudoku la cual devuelve Nothing si no puede
 -- resolverlo o un Just en caso de que si
-printSolucionTablero9x9 :: Maybe Tablero -> IO ()
-printSolucionTablero9x9 Nothing  = putStrLn "No tiene solucion"
-printSolucionTablero9x9 (Just t) = mapM_ putStrLn ([show $ t `valsInRow` row | row <- [0..8]] ++ ["\n"])
+printSolucionTablero :: Maybe Tablero -> IO ()
+printSolucionTablero Nothing  = putStrLn "No tiene solucion"
+printSolucionTablero (Just t) = mapM_ putStrLn ([show $ t `valsInRow` row | row <- [0..8]] ++ ["\n"])
         -- por cada una de las rows se devuelve un string gracias al uso de la
         -- funcion show y ejecutamos el putStrLn para que se muestre una debajo
         -- de la otra. Logramos mostrar todas las lineas gracias a mapM_
         -- mapM_ :: (Monad m, Foldable t) => (a -> m b) -> t a -> m ()
 
-printSolucionTableros9x9 :: [Maybe Tablero] -> IO ()
-printSolucionTableros9x9 ts = mapM_ printSolucionTablero9x9 ts 
+printSolucionTableros :: [Maybe Tablero] -> IO ()
+printSolucionTableros ts = mapM_ printSolucionTablero ts 
 
 -- Devuelve un tablero de sudoku listo para procesarse
-tableroSudoku9x9 :: Int -> Tablero
-tableroSudoku9x9 1 = array ((0, 0), (8, 8)) $ sudokuParser9x9 sudokuEjemplo1
-tableroSudoku9x9 2 = array ((0, 0), (8, 8)) $ sudokuParser9x9 sudokuEjemplo2
-tableroSudoku9x9 3 = array ((0, 0), (8, 8)) $ sudokuParser9x9 sudokuEjemplo3
-tableroSudoku9x9 4 = array ((0, 0), (8, 8)) $ sudokuParser9x9 sudokuEjemplo4
-tableroSudoku9x9 x = array ((0, 0), (8, 8)) $ sudokuParser9x9 emptySudoku
+tableroSudoku :: Int -> Tablero
+tableroSudoku 1 = array ((0, 0), (8, 8)) $ sudokuParser sudokuEjemplo1
+tableroSudoku 2 = array ((0, 0), (8, 8)) $ sudokuParser sudokuEjemplo2
+tableroSudoku 3 = array ((0, 0), (8, 8)) $ sudokuParser sudokuEjemplo3
+tableroSudoku 4 = array ((0, 0), (8, 8)) $ sudokuParser sudokuEjemplo4
+tableroSudoku x = array ((0, 0), (8, 8)) $ sudokuParser emptySudoku
                 -- se reserva un espacio en memoria con toda la combinacion de
                 -- de indices desde 0,0 hasta el 8,8 y luego se rellena con
                 -- lo que devuelve el metodo sudokuParser el cual pasa un 
                 -- array de array de Int a un formato de Tablero definido mas arriba
 
-sudokuParser9x9' :: [[Valor]] -> Tablero
-sudokuParser9x9' sud = array ((0, 0), (8, 8)) $ concatMap rowParser $ zip [0..8] sud
+sudokuParser' :: [[Valor]] -> Tablero
+sudokuParser' sud = array ((0, 0), (8, 8)) $ concatMap rowParser $ zip [0..8] sud
     where
     rowParser :: (Int, [Valor]) -> [((Int, Int), Valor)]
     rowParser (row, vals) = colParser row $ zip [0..8] vals
@@ -112,8 +112,8 @@ sudokuParser9x9' sud = array ((0, 0), (8, 8)) $ concatMap rowParser $ zip [0..8]
 
 -- Convierte un array de filas de valores en un array de tuplas compuestas 
 -- por ubicacion y valor (Es del tipo Tablero)
-sudokuParser9x9 :: [[Valor]] -> [(Ubicacion, Valor)]
-sudokuParser9x9 sud = concatMap rowParser $ zip [0..8] sud
+sudokuParser :: [[Valor]] -> [(Ubicacion, Valor)]
+sudokuParser sud = concatMap rowParser $ zip [0..8] sud
         -- zip devuelve [(0,[1,2,3,4,5,6,7,8,9]), .. ] donde cada valor
         -- es (Int,[Valor]) parametro que recibe rowParser que con concatMap
         -- lo que hacemos es mandarle cada uno de los elementos del array
