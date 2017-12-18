@@ -1,30 +1,15 @@
 module Sudoku4x4V2
-(
-	leer,
-	parsearEntrada,
-	printAsMatriz,
-	toFilas,
-	start
-	)where
+    (
+	   parsearEntrada,
+	   printAsMatriz,
+	   start
+    )where
 
 import Data.Char
 import Data.List
 import System.IO
 import Data.Maybe
-
-leer :: String -> IO ()
-leer nombre = do 
-				s <- readFile nombre;
-				let entrada = parsearEntrada s
-				if isValid entrada 
-					then do  
-						writeFile "rs1.txt" ("Sudoku de entrada"++ '\n' : (printAsMatriz 4 (toFilas entrada)) ++ '\n':'\n':[])
-						appendFile "rs1.txt"("Sudoku resuelto"++ '\n' :  (printAsMatriz 4 (start (toFilas entrada)))) 
-					else do
-						putStrLn "Ingreso mal los datos.."
-						writeFile "rs1.txt" ("Sudoku de entrada"++ '\n' : (printAsMatriz 4 (toFilas entrada)) ++ '\n':'\n':[])
-
-
+import Sudoku
 
 
 -- Toma un tablero que viene desde un archivo y lo convierte en una lista de enteros, suprimiento caracteres como '[', ']', ','
@@ -37,17 +22,6 @@ parsearEntrada (c:cs)
 					| isDigit c && (digitToInt(c) `elem` [0..4]) = digitToInt(c) : (parsearEntrada cs)
 					|otherwise = parsearEntrada cs
 
-
--- Funcion que imprime el tablero en pantalla. Sus parámetros de entrada son: el tamaño del tablero y el tablero en forma de lista.
-printAsMatriz :: Int -> [[Int]] -> String
-printAsMatriz _ [] = " ________"
-printAsMatriz n (l:ls) = " ________" ++ '\n' : ' ': (intersperse '|' (map (intToDigit) l)) ++ '\n' : (printAsMatriz n ls)
-
-
--- Funcion que enlista las filas del tablero
-toFilas :: [a] -> [[a]]
-toFilas [] = []
-toFilas t = take 4 t : toFilas (drop 4 t) 
 
 -- Funcion que enlista las columnas del tablero
 toColumnas :: [[a]] -> [[a]]
@@ -108,12 +82,6 @@ tableroValido t
 				| length t == 16 = True
 				| otherwise = False 
 
-
--- Funcion que verifica si un tablero ingresado es válido o no.
-isValid :: [Int] -> Int -> Bool 
-isValid entrada n
-			|length entrada == n = True
-			|otherwise = False
 
 -- Devuelve el valor que todavia no está en la lista. Sirve tambien para los indices de donde no esta un valor.
 valorFaltante :: [Int] -> [Int]

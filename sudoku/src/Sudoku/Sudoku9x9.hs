@@ -1,10 +1,12 @@
-module Sudoku9x9
+module Sudoku.Sudoku9x9
     ( 
         tableroSudoku9x9,
         resolverSudoku9x9,
         printSolucionTablero9x9,
         printSolucionTableros9x9,
-        sudokuParser9x9
+        sudokuParser9x9,
+        sudokuParser9x9',
+        soluciones
     ) where
 
 import Data.Array
@@ -97,6 +99,15 @@ tableroSudoku9x9 x = array ((0, 0), (8, 8)) $ sudokuParser9x9 emptySudoku
                 -- de indices desde 0,0 hasta el 8,8 y luego se rellena con
                 -- lo que devuelve el metodo sudokuParser el cual pasa un 
                 -- array de array de Int a un formato de Tablero definido mas arriba
+
+sudokuParser9x9' :: [[Valor]] -> Tablero
+sudokuParser9x9' sud = array ((0, 0), (8, 8)) $ concatMap rowParser $ zip [0..8] sud
+    where
+    rowParser :: (Int, [Valor]) -> [((Int, Int), Valor)]
+    rowParser (row, vals) = colParser row $ zip [0..8] vals
+
+    colParser :: Int -> [(Int, Valor)] -> [((Int, Int), Valor)]
+    colParser row colsAndVals = map (\(col, v) -> ((row, col), v)) colsAndVals
 
 
 -- Convierte un array de filas de valores en un array de tuplas compuestas 

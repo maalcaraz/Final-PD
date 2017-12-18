@@ -6,16 +6,10 @@ module Sudoku.Sudoku4x4
         printSolucionTableros4x4,
         sudokuParser4x4,
         sudokuParser4x4',
-        soluciones,
-        toFilas,
-        toPrinteable,
-        printAsMatriz,
-        toFormatForSave
+        soluciones
     ) where
 
 import Data.Array
-import Data.Char
-import Data.List
 import Tests4x4
 import SudokuTypes
 
@@ -41,7 +35,7 @@ soluciones t = take 10 ( soluciones' (ubicacionesVacias t) t )
     soluciones' []     t = [t]
     soluciones' (ub:ubs) t = concatMap (soluciones' ubs) tablerosPosibles
       where
-        tablerosPosibles = map (\v -> copiarTableroConValorNuevo v ub t) valoresPosibles
+        tablerosPosibles = map (\vp -> copiarTableroConValorNuevo vp ub t) valoresPosibles
         valoresPosibles = [v | v <- [1..4], isValidValor v ub t]
         
 
@@ -107,9 +101,14 @@ tableroSudoku4x4 x = array ((0, 0), (3, 3)) $ sudokuParser4x4 emptySudoku
                 -- lo que devuelve el metodo sudokuParser el cual pasa un 
                 -- array de array de Int a un formato de Tablero definido mas arriba
 
-
 sudokuParser4x4' :: [[Valor]] -> Tablero
 sudokuParser4x4' sud = array ((0, 0), (3, 3)) $ concatMap rowParser $ zip [0..3] sud
+    where
+    rowParser :: (Int, [Valor]) -> [((Int, Int), Valor)]
+    rowParser (row, vals) = colParser row $ zip [0..3] vals
+
+    colParser :: Int -> [(Int, Valor)] -> [((Int, Int), Valor)]
+    colParser row colsAndVals = map (\(col, v) -> ((row, col), v)) colsAndVals
 
 -- Convierte un array de filas de valores en un array de tuplas compuestas 
 -- por ubicacion y valor (Es del tipo Tablero)
@@ -124,22 +123,6 @@ sudokuParser4x4 sud = concatMap rowParser $ zip [0..3] sud
     rowParser (row, vals) = colParser row $ zip [0..3] vals
 
     colParser :: Int -> [(Int, Valor)] -> [((Int, Int), Valor)]
-    colParser row cols = map (\(col, v) -> ((row, col), v)) cols
+    colParser row colsAndVals = map (\(col, v) -> ((row, col), v)) colsAndVals
     -- por cada una de los cols defino (col,v) donde (row,col) representa el
     -- indice y v representa el valor
-
-toFilas :: [Valor] -> [[Valor]]
-toFilas [] = []
-toFilas t = take 4 t : toFilas (drop 4 t)
-
-toPrinteable :: Tablero -> [Valor]
-toPrinteable t =  [t ! (row, col) | row <- [0..3], col <- [0..3]] 
-
-printAsMatriz :: Int -> [Valor] -> String
-printAsMatriz _ [] = " ________"
-printAsMatriz n (lista) = " ________" ++ '\n' : ' ' : (intersperse '|' (map (intToDigit) (take n lista))) ++ '\n' : (printAsMatriz n(drop n lista))
-
-toFormatForSave :: [String] -> String
-toFormatForSave [] = []
-toFormatForSave t =  unlines t
-

@@ -1,4 +1,4 @@
-module Sudoku16x16
+module Sudoku.Sudoku16x16
     ( 
         tableroSudoku16x16,
         resolverSudoku16x16,
