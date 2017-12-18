@@ -16,8 +16,10 @@ es capaz de obtener hasta 10 de las posibles.
     Sudoku16x16.hs
     Sudoku4x4V2.hs
     
-En las primeras dos versiones se incluyen las funciones necesarias para resolver sudokus mediante una técnica de *backtracking*.
-*  
+En las primeras tres versiones se incluyen las funciones necesarias para resolver sudokus mediante una técnica de *backtracking*:
+
+*  Mediante una función detecta las ubicaciones vacías, y va analizando en el tablero qué valores puede tomar cada una. Para los x valores que pueda tomar crea un tablero duplicado y vuelva a llamar de manera recursiva a dicha función.
+
 
 La última mencionada es una versión alternativa, que implementa la forma "intuitiva" de resolver sudokus. Utiliza la técnica de *posición única*:
 
@@ -27,25 +29,15 @@ La última mencionada es una versión alternativa, que implementa la forma "intu
 
 ----
 ## Instrucciones de uso
-1. 
-2. 
 
+> 1. Clonar el repositorio de la aplicación usando la url [Final-PD](https://github.com/maalcaraz/Final-PD.git)
 
-# headers
+2. Instalar la herramienta **stack**. Puede hacerlo siguiendo los pasos de este
+[link](https://docs.haskellstack.org/en/stable/README/).
 
-*emphasis*
+3. Una vez instalada, por consola dirigirse al path raíz del repositorio descargado       
+    *cd ../Final-PD/sudoku*
 
-**strong**
-
-* list
-
-
-[links](http://wikipedia.org)
-
-----
-## changelog
-* 17-Feb-2013 re-design
-
-----
-## Agradecimientos
-* [markdown-js](https://github.com/evilstreak/markdown-js)
+4. Ejecutar el comando
+     *stack ghci*
+5. Escribir *main*
