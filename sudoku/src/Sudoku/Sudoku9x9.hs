@@ -1,25 +1,32 @@
-module Sudoku9x9
+module Sudoku.Sudoku9x9
     ( 
         tableroSudoku,
         resolverSudoku,
-        printSolucionTablero
+        printSolucionTablero,
+        printSolucionTableros,
+        sudokuParser,
+        sudokuParser',
+        soluciones
     ) where
 
 import Data.Array
 import Tests9x9
 import SudokuTypes
 
--- Retorna un tablero resuelto o 'Nothing' si no encuentra ninguna
-resolverSudoku :: Tablero -> Maybe Tablero
-resolverSudoku = primerSolucionONada . soluciones
+-- Retorna x cant de tableros resueltos o 'Nothing' si no encuentra ninguno
+resolverSudoku :: Tablero -> [Maybe Tablero]
+resolverSudoku = tablerosToMaybe . soluciones
 
-primerSolucionONada :: [a] -> Maybe a
-primerSolucionONada []     = Nothing
-primerSolucionONada (x:xs) = Just x
+tablerosToMaybe :: [Tablero] -> [Maybe Tablero]
+tablerosToMaybe [] = [Nothing]
+tablerosToMaybe ts = map tableroToMaybe ts
+
+tableroToMaybe :: Tablero -> Maybe Tablero
+tableroToMaybe t = Just t
 
 -- Devuelve un array de Tableros donde cada uno es una solucion
 soluciones :: Tablero -> [Tablero]
-soluciones t = soluciones' (ubicacionesVacias t) t
+soluciones t = take 10 ( soluciones' (ubicacionesVacias t) t )
   where
     -- Dada una lista de ubicaciones vacias en un tablero, toma una ubicacion vacia,
     -- determina que ubicaciones pueden ser puestas en esa solucion, y luego
@@ -72,11 +79,14 @@ t `valsInCuadrado` (row, col) = [t ! v | v <- ubicaciones]
 -- resolverlo o un Just en caso de que si
 printSolucionTablero :: Maybe Tablero -> IO ()
 printSolucionTablero Nothing  = putStrLn "No tiene solucion"
-printSolucionTablero (Just t) = mapM_ putStrLn [show $ t `valsInRow` row | row <- [0..8]]
+printSolucionTablero (Just t) = mapM_ putStrLn ([show $ t `valsInRow` row | row <- [0..8]] ++ ["\n"])
         -- por cada una de las rows se devuelve un string gracias al uso de la
         -- funcion show y ejecutamos el putStrLn para que se muestre una debajo
         -- de la otra. Logramos mostrar todas las lineas gracias a mapM_
         -- mapM_ :: (Monad m, Foldable t) => (a -> m b) -> t a -> m ()
+
+printSolucionTableros :: [Maybe Tablero] -> IO ()
+printSolucionTableros ts = mapM_ printSolucionTablero ts 
 
 -- Devuelve un tablero de sudoku listo para procesarse
 tableroSudoku :: Int -> Tablero
@@ -89,6 +99,15 @@ tableroSudoku x = array ((0, 0), (8, 8)) $ sudokuParser emptySudoku
                 -- de indices desde 0,0 hasta el 8,8 y luego se rellena con
                 -- lo que devuelve el metodo sudokuParser el cual pasa un 
                 -- array de array de Int a un formato de Tablero definido mas arriba
+
+sudokuParser' :: [[Valor]] -> Tablero
+sudokuParser' sud = array ((0, 0), (8, 8)) $ concatMap rowParser $ zip [0..8] sud
+    where
+    rowParser :: (Int, [Valor]) -> [((Int, Int), Valor)]
+    rowParser (row, vals) = colParser row $ zip [0..8] vals
+
+    colParser :: Int -> [(Int, Valor)] -> [((Int, Int), Valor)]
+    colParser row colsAndVals = map (\(col, v) -> ((row, col), v)) colsAndVals
 
 
 -- Convierte un array de filas de valores en un array de tuplas compuestas 
